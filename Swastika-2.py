@@ -1,9 +1,17 @@
-#Statistical testing
-#----------------
+# Statistical testing
+# ------------------
+
 from bb import alice_bit_generator
 from bb import alice_bases_generator
-from evemod import eve_bases_generator
-from evemod import eve-attack
+from bb import encode_qubits
+
+from evemod import eve_attack
+
+from qiskit_aer import AerSimulator
+from qiskit import transpile
+
+n = 8
+shots = 1
 
 alice_bits = alice_bit_generator(n)
 alice_bases = alice_bases_generator(n)
@@ -13,14 +21,12 @@ print("Alice bases:", alice_bases)
 
 qc = encode_qubits(alice_bits, alice_bases)
 
-eve_bases = eve_bases_generator(n)
-attack_prob = 0.5   
+attack_prob = 0.5
 
-qc = eve_attack(qc, eve_bases, attack_prob)
+qc, eve_bases = eve_attack(qc, n, attack_prob)
 
 print("Eve bases:", eve_bases)
 print("Attack probability:", attack_prob)
-
 
 bob_basis = alice_bases_generator(n)
 print("Bob bases:", bob_basis)
@@ -30,7 +36,7 @@ for i in range(n):
         qc.h(i)
     qc.measure(i, i)
 
-backend = Aer.get_backend('aer_simulator')
+backend = AerSimulator()
 
 compiled = transpile(qc, backend)
 job = backend.run(compiled, shots=shots)
